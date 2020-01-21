@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
-var Ajv = require('ajv');
-var ajv = new Ajv();
-
+const Ajv = require('ajv');
+const ajv = new Ajv();
+const User = require('../../models/users/users')
 
 app.get('/user', (req, res) => {
     res.json({ message: 'Hello get user' })
@@ -19,11 +19,27 @@ app.post('/user', (req, res) => {
         ]
     };
 
-    var validate = ajv.compile(schema);
-    var valid = validate(req.body);
-    if (!valid) res.json({ errors: validate.errors })
+    const validate = ajv.compile(schema);
+    let valid = validate(req.body);
+    if (!valid) return res.status(400).json({ errors: validate.errors })
 
-    res.json({ message: 'Hello post user' })
+    let user = new User({
+        username: req.body.username,
+        password: req.body.password,
+    });
+
+    user.save((err, db_user) => {
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+        return res.json({
+            ok: true,
+            usuario: db_user
+        });
+    });
 })
 
 module.exports = app

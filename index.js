@@ -1,14 +1,21 @@
+/* Index :D */
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app.use(require('./endpoints/urls.js'))
 
-process.env.PORT = 3000
+mongoose.connect(process.env.URLDB,
+    { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+        if (err) {
+            throw err
+        }
+    });
 
-app.listen(3000, () => {
-    console.log('Escuchando puerto: ', process.env.PORT);
-});
+app.listen(process.env.PORT);

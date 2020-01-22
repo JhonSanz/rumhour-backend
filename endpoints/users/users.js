@@ -1,14 +1,18 @@
+/* Defines users endpoints */
+
 const express = require('express');
 const app = express();
 const Ajv = require('ajv');
 const ajv = new Ajv();
 const User = require('../../models/users/users')
+const { verifyApiKey } = require('../../middlewares/api_key')
 
-app.get('/user', (req, res) => {
+
+app.get('/user', verifyApiKey, (req, res) => {
     res.json({ message: 'Hello get user' })
 })
 
-app.post('/user', (req, res) => {
+app.post('/user', verifyApiKey, (req, res) => {
     var schema = {
         "properties": {
             "username": { "type": "string" },

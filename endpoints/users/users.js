@@ -3,6 +3,7 @@
 const express = require('express');
 const app = express();
 const Ajv = require('ajv');
+const bcrypt = require('bcrypt');
 const ajv = new Ajv();
 const User = require('../../models/users/users')
 const { verifyApiKey } = require('../../middlewares/api_key')
@@ -15,12 +16,12 @@ app.get('/user', verifyApiKey, (req, res) => {
 app.post('/user', verifyApiKey, (req, res) => {
     var schema = {
         "properties": {
-            "username": { "type": "string" },
+            "email": { "type": "string" },
             "password": { "type": "string" }
         },
         "oneOf": [
-            { "required": ["username", "password"] },
-        ]
+            { "required": ["email", "password"] },
+        ],
     };
 
     const validate = ajv.compile(schema);
@@ -28,8 +29,9 @@ app.post('/user', verifyApiKey, (req, res) => {
     if (!valid) return res.status(400).json({ errors: validate.errors })
 
     let user = new User({
-        username: req.body.username,
-        password: req.body.password,
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, 10),
+        secretKey: Math.random().toString(20)
     });
 
     user.save((err, db_user) => {

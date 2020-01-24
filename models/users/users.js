@@ -31,7 +31,7 @@ let userSchema = new Schema({
     },
     role: {
         type: String,
-        default: 'USER',
+        default: USER,
         enum: roleChoices
     },
 });
@@ -43,6 +43,7 @@ userSchema.methods.toJSON = function () {
     let userObject = this.toObject();
     delete userObject.password;
     delete userObject.role;
+    delete userObject.secretKey;
     return userObject;
 }
 

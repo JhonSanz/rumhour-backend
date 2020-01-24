@@ -9,11 +9,11 @@ const User = require('../../models/users/users')
 const { verifyApiKey } = require('../../middlewares/api_key')
 
 
-app.get('/user', verifyApiKey, (req, res) => {
+app.get('/user', [verifyApiKey], (req, res) => {
     res.json({ message: 'Hello get user' })
 })
 
-app.post('/user', verifyApiKey, (req, res) => {
+app.post('/user', [verifyApiKey], (req, res) => {
     var schema = {
         "properties": {
             "email": { "type": "string" },
@@ -34,7 +34,7 @@ app.post('/user', verifyApiKey, (req, res) => {
         secretKey: Math.random().toString(20)
     });
 
-    user.save((err, db_user) => {
+    user.save((err, userDB) => {
         if (err) {
             return res.status(400).json({
                 ok: false,
@@ -43,7 +43,7 @@ app.post('/user', verifyApiKey, (req, res) => {
         }
         return res.json({
             ok: true,
-            usuario: db_user
+            usuario: userDB
         });
     });
 })

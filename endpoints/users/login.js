@@ -1,19 +1,17 @@
-/* Defines users endpoints */
 
 const Ajv = require('ajv');
 const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
 const express = require('express');
-const User = require('../../models/users/users')
-const { verifyApiKey } = require('../../middlewares/api_key')
+const jwt = require('jsonwebtoken');
+const user = require('../../models/users/users');
 const ajv = new Ajv();
 const app = express();
 
+dotenv.config();
 
-app.get('/user', [verifyApiKey], (req, res) => {
-    res.json({ message: 'Hello get user' })
-})
 
-app.post('/user', [verifyApiKey], (req, res) => {
+app.post('/login', (req, res) => {
     var schema = {
         "properties": {
             "email": { "type": "string" },
@@ -28,24 +26,27 @@ app.post('/user', [verifyApiKey], (req, res) => {
     let valid = validate(req.body);
     if (!valid) return res.status(400).json({ errors: validate.errors })
 
-    let user = new User({
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 10),
-        secretKey: Math.random().toString(20)
-    });
+    user.findOne({ email: req.body.email }, (err, userDB) => {
+        if (err) return res.status(500).json({ ok: false, err });
 
-    user.save((err, userDB) => {
-        if (err) {
+        if (!userDB || !bcrypt.compareSync(req.body.password, userDB.password))
             return res.status(400).json({
                 ok: false,
-                err
+                err: {
+                    message: 'Wrong credentials provided'
+                }
             });
-        }
-        return res.json({
-            ok: true,
+
+        let token = jwt.sign({
             user: userDB
+        }, process.env.SEED, { expiresIn: process.env.DEAD_TIME_TOKEN });
+
+        res.json({
+            ok: true,
+            user: userDB,
+            token
         });
     });
-})
+});
 
 module.exports = app

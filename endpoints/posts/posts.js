@@ -1,13 +1,14 @@
-const express = require('express');
-const app = express();
-const { verifyApiKey } = require('../../middlewares/api_key')
-const { allowedValues, Post } = require('../../models/posts/post')
+
 const Ajv = require('ajv');
-
+const express = require('express');
+const { allowedValues, Post } = require('../../models/posts/post')
+const { checkAuthentication } = require('../../middlewares/authentication')
+const { verifyApiKey } = require('../../middlewares/api_key')
 const ajv = new Ajv();
+const app = express();
 
 
-app.post('/post', [verifyApiKey], (req, res) => {
+app.post('/post', [checkAuthentication, verifyApiKey], (req, res) => {
     var schema = {
         "properties": {
             "title": { "type": "string" },
@@ -26,6 +27,7 @@ app.post('/post', [verifyApiKey], (req, res) => {
         title: req.body.title,
         body: req.body.body,
         type: req.body.type,
+        user: req.user
     });
 
     post.save((err, db_post) => {

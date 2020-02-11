@@ -1,12 +1,12 @@
 /* Defines users endpoints */
 
-const express = require('express');
-const app = express();
 const Ajv = require('ajv');
 const bcrypt = require('bcrypt');
-const ajv = new Ajv();
+const express = require('express');
 const User = require('../../models/users/users')
 const { verifyApiKey } = require('../../middlewares/api_key')
+const ajv = new Ajv();
+const app = express();
 
 
 app.get('/user', [verifyApiKey], (req, res) => {
@@ -43,7 +43,7 @@ app.post('/user', [verifyApiKey], (req, res) => {
         }
         return res.json({
             ok: true,
-            usuario: userDB
+            user: userDB
         });
     });
 })

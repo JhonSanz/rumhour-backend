@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const uniqueValidator = require('mongoose-unique-validator');
@@ -34,6 +35,10 @@ let userSchema = new Schema({
         default: USER,
         enum: roleChoices
     },
+    logo: {
+        type: String,
+        required: false
+    }
 });
 
 /**

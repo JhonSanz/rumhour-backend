@@ -7,4 +7,8 @@ io.on('connection', function (socket) {
             posts: posts
         });
     })
+    socket.on('hi', function () {
+        socket.emit('NEW', {title: "hello", body: "from websocket"});
+        socket.broadcast.emit('NEW', {title: "hello", body: "from websocket"});
+    });
 });

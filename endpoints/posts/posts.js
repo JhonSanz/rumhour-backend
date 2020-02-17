@@ -8,7 +8,7 @@ const ajv = new Ajv();
 const app = express();
 
 
-app.post('/post', [checkAuthentication, verifyApiKey], (req, res) => {
+app.post('/post',  (req, res) => {
     var schema = {
         "properties": {
             "title": { "type": "string" },

@@ -9,6 +9,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
 app.use(require('./endpoints/urls.js'))
 
 const server = app.listen(process.env.PORT);

@@ -7,8 +7,10 @@ io.on('connection', function (socket) {
             posts: posts
         });
     })
-    socket.on('hi', function () {
-        socket.emit('NEW', {title: "hello", body: "from websocket"});
-        socket.broadcast.emit('NEW', {title: "hello", body: "from websocket"});
+    socket.on('hi', async function (id) {
+        Post.findById(id, function (err, post) {
+            socket.emit('NEW', post);
+            socket.broadcast.emit('NEW', post);
+        });
     });
 });

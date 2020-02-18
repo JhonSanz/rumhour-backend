@@ -7,8 +7,8 @@ io.on('connection', function (socket) {
             posts: posts
         });
     })
-    socket.on('hi', async function (id) {
-        Post.findById(id, function (err, post) {
+    socket.on('created', function (data, fn) {
+        Post.findById(data.identifier, function (err, post) {
             socket.emit('NEW', post);
             socket.broadcast.emit('NEW', post);
         });

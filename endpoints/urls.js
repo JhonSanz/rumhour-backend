@@ -13,6 +13,7 @@ app.use(cors({
 app.use(require('./users/users'));
 app.use(require('./users/login'));
 app.use(require('./posts/posts'));
+app.use(require('./posts/comments'));
 app.use(require('./board/board'));
 
 

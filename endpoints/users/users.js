@@ -1,4 +1,6 @@
-/* Defines users endpoints */
+/**
+* @file Users endpoints definition
+*/
 
 const Ajv = require('ajv');
 const bcrypt = require('bcrypt');
@@ -8,12 +10,16 @@ const { verifyApiKey } = require('../../middlewares/api_key')
 const ajv = new Ajv();
 const app = express();
 
-
 app.get('/user', [verifyApiKey], (req, res) => {
     res.json({ message: 'Hello get user' })
 })
 
-app.post('/user', [verifyApiKey], (req, res) => {
+
+/**
+* Signing up within rumhour app.
+* @return {JSON} Signed up user or error.
+*/
+app.post('/user', [verifyApiKey], async (req, res) => {
     var schema = {
         "properties": {
             "email": { "type": "string" },
@@ -34,17 +40,17 @@ app.post('/user', [verifyApiKey], (req, res) => {
         secretKey: Math.random().toString(20)
     });
 
-    user.save((err, userDB) => {
-        if (err) {
+    user = await user.save()
+        .catch(err => {
             return res.status(400).json({
                 ok: false,
                 err
-            });
-        }
-        return res.json({
-            ok: true,
-            user: userDB
-        });
+            })
+        })
+
+    return res.json({
+        ok: true,
+        user: user
     });
 })
 

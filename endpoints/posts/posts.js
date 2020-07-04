@@ -1,3 +1,6 @@
+/**
+* @file Posts endpoints definition
+*/
 
 const Ajv = require('ajv');
 const express = require('express');
@@ -7,8 +10,11 @@ const { verifyApiKey } = require('../../middlewares/api_key')
 const ajv = new Ajv();
 const app = express();
 
-
-app.post('/post',  (req, res) => {
+/**
+* Creates new post.
+* @return {JSON} Created post or error.
+*/
+app.post('/post', async (req, res) => {
     var schema = {
         "properties": {
             "title": { "type": "string" },
@@ -30,18 +36,16 @@ app.post('/post',  (req, res) => {
         user: req.user
     });
 
-    post.save((err, db_post) => {
-        if (err) {
-            return res.status(400).json({
-                ok: false,
-                err
-            });
-        }
-        return res.json({
-            ok: true,
-            post: db_post
-        });
-    });
+    post = await post.save()
+        .catch(err => res.status(400).json({
+            ok: false,
+            err
+        }))
+
+    return res.json({
+        ok: true,
+        post: post
+    })
 })
 
 module.exports = app

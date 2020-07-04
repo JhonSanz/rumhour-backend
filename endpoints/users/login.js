@@ -1,3 +1,6 @@
+/**
+* @file Authentication endpoints definition
+*/
 
 const Ajv = require('ajv');
 const bcrypt = require('bcrypt');
@@ -10,8 +13,11 @@ const app = express();
 
 dotenv.config();
 
-
-app.post('/login', (req, res) => {
+/**
+* Signing in rumhour app.
+* @return {JSON} Signed in user or error.
+*/
+app.post('/login', async (req, res) => {
     var schema = {
         "properties": {
             "email": { "type": "string" },
@@ -26,26 +32,23 @@ app.post('/login', (req, res) => {
     let valid = validate(req.body);
     if (!valid) return res.status(400).json({ errors: validate.errors })
 
-    user.findOne({ email: req.body.email }, (err, userDB) => {
-        if (err) return res.status(500).json({ ok: false, err });
+    let userFound = await user.findOne({ email: req.body.email })
+        .catch(err => res.status(500).json({ ok: false, err }))
 
-        if (!userDB || !bcrypt.compareSync(req.body.password, userDB.password))
-            return res.status(400).json({
-                ok: false,
-                err: {
-                    message: 'Wrong credentials provided'
-                }
-            });
-
-        let token = jwt.sign({
-            user: userDB
-        }, process.env.SEED, { expiresIn: process.env.DEAD_TIME_TOKEN });
-
-        res.json({
-            ok: true,
-            user: userDB,
-            token
+    if (!userFound || !bcrypt.compareSync(req.body.password, userFound.password))
+        return res.status(400).json({
+            ok: false,
+            err: {message: 'Wrong credentials provided'}
         });
+    
+    let token = jwt.sign({
+        user: userFound
+    }, process.env.SEED, { expiresIn: process.env.DEAD_TIME_TOKEN });
+
+    res.json({
+        ok: true,
+        user: userFound,
+        token
     });
 });
 

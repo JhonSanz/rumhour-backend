@@ -41,9 +41,6 @@ let userSchema = new Schema({
     }
 });
 
-/**
- * Defines displaying user schema fields
- */
 userSchema.methods.toJSON = function () {
     let userObject = this.toObject();
     delete userObject.password;

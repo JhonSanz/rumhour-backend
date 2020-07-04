@@ -10,9 +10,7 @@ let checkAuthentication = (req, res, next) => {
         if (err) {
             return res.status(401).json({
                 ok: false,
-                err: {
-                    message: 'Invalid token provided'
-                }
+                err: {message: 'Invalid token provided'}
             });
         }
         req.user = decoded.user;
@@ -20,6 +18,4 @@ let checkAuthentication = (req, res, next) => {
     });
 };
 
-module.exports = {
-    checkAuthentication
-}
+module.exports = {checkAuthentication}

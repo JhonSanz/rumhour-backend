@@ -18,7 +18,7 @@ module.exports = io
 require('./sockets/sockets')
 
 mongoose.connect(process.env.URLDB,
-    { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+    { useCreateIndex: true, useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
         if (err) {
             throw err
         }

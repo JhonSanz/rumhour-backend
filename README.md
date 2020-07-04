@@ -6,4 +6,4 @@ This repo storages only API rest made with express
 
 and was deployed to testing using Heroku and Mongo Compass
 
-Frontend was made with react, but is not my main framework hahaha, i like more angular; and Django as backend... but javascript in backend is awesome also !! :D
+Frontend was made with react, but is not my main framework hahaha, i like more angular; and Django as backend... but javascript in backend is awesome too !! :D
